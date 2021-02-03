@@ -98,9 +98,17 @@ void osuCrypto::NcoOtExtSender::sendChosen(MatrixView<block> messages, PRNG & pr
             temp(i, j) = temp(i, j) ^ messages(i, j);
         }
     }
+    
+    Matrix<uint8_t> packed(messages.rows(), numMsgsPerOT);
+    for (u64 i = 0; i < messages.rows(); ++i)
+    {
+        for (j = 0; j < numMsgsPerOT; ++j)
+        {
+            packed(i, j) = temp(i, j).as<char>()[0];
+        }
+    }
 
-
-    chl.asyncSend(std::move(temp));
+    chl.asyncSend(std::move(packed));
 }
 
 void osuCrypto::NcoOtExtReceiver::receiveChosen(
@@ -123,15 +131,18 @@ void osuCrypto::NcoOtExtReceiver::receiveChosen(
         encode(i, &j, &messages[i]);
     }
     sendCorrection(chl, messages.size());
-    Matrix<block> temp(messages.size(), numMsgsPerOT);
+    
+    //Matrix<block> temp(messages.size(), numMsgsPerOT);
 
     if (isMalicious())
         check(chl, prng.get<block>());
+
+    Matrix<uint8_t> temp(messages.size(), numMsgsPerOT);
 
     chl.recv(temp.data(), temp.size());
 
     for (i64 i = 0; i < messages.size(); ++i)
     {
-        messages[i] = messages[i] ^ temp(i, choices[i]);
+        messages[i] = messages[i] ^ block(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, temp(i, choices[i]));
     }
 }

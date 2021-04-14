@@ -135,12 +135,12 @@ void execution(Role role, int n, int K, int numThreads, std::string ip)
 		exportFile2.write((char *)&K, sizeof(K));
 		for (int i = 0; i < numOTs; i++){
 			const std::array<char, 16> arr = recvMsgs.at(i).as<char>();
-			exportFile2.write((char *) &arr[0], 1);
+			//exportFile2.write((char *) &arr[0], 1);
 		}
 		for (int i = 0; i < numOTs; i++){
 			uint8_t reduced = (uint8_t) choices[i];
 			// << "Choices: " << (uint32_t) reduced << std::endl;
-			exportFile2.write((char *) &reduced, 1);
+			//exportFile2.write((char *) &reduced, 1);
 		}
 		exportFile2.close();
 		std::cout << "Sent Data: " << chl.getTotalDataSent() << std::endl;
@@ -190,7 +190,7 @@ void execution(Role role, int n, int K, int numThreads, std::string ip)
 		exportFile2.write((char *)&K, sizeof(K));
 		for (int i = 0; i < numOTs*numChosenMsgs; i++){
 			const std::array<char, 16> arr = sendMessages.data()[i].as<char>();
-			exportFile2.write((char *) &arr[0], 1);
+			//exportFile2.write((char *) &arr[0], 1);
 		}
 		exportFile2.close();
 	};
@@ -265,6 +265,6 @@ int main(int argc, char** argv)
 
 	roles = 0;
 	std::string ip = "localhost:1212";
-	runIf(execution<KkrtNcoOtSender, KkrtNcoOtReceiver>, roles, ip, 100000, 128);
+	runIf(execution<KkrtNcoOtSender, KkrtNcoOtReceiver>, roles, ip, 16000000, 13);
 
 }
